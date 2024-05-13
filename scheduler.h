@@ -41,7 +41,7 @@ void executeProcess(Process p) {
 }
 
 void multilevelQueue(Process processes[], int n) {
-    // Assuming that the processes are already sorted by priority
+    // 우선순위 별로 정렬되어있다고 가정함
     for (int i = 0; i < n; i++) {
         executeProcess(processes[i]);
     }
