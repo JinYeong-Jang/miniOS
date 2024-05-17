@@ -10,6 +10,7 @@ typedef struct {
     int arrival_time;
     int burst_time;
     int remaining_time;
+    int priority;
 } Process;
 
 ///RoundRobin
