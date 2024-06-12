@@ -1,4 +1,8 @@
 DIR root
 FILE os
-FILE Hi
+DIR a10
+FILE os
+ENDDIR
 DIR clipboard
+ENDDIR
+ENDDIR
