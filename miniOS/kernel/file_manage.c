@@ -66,7 +66,8 @@ void moveToParentDirectory() {
     if (currentDir->parent != NULL) {
         currentDir = currentDir->parent;
         printf("Moved to parent directory '%s'.\n", currentDir->dirName);
-    } else {
+    }
+    else {
         printf("Already in the root directory.\n");
     }
 }
@@ -160,7 +161,8 @@ void removeFile(const char* fileName) {
 
     if (prev == NULL) {
         currentDir->files = current->next;
-    } else {
+    }
+    else {
         prev->next = current->next;
     }
 
@@ -224,4 +226,3 @@ void saveDirectoryStructure(Directory* dir, FILE* file) {
     FileNode* currentFile = dir->files;
     while (currentFile != NULL) {
         fprintf(file, "FILE %s
-
