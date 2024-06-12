@@ -86,6 +86,16 @@ void moveToDirectory(const char* dirName) {
 
 // 새로운 파일을 생성합니다.
 void newfile(const char* fileName) {
+    // 같은 이름의 파일이 이미 존재하는지 확인합니다.
+    FileNode* current = currentDir->files;
+    while (current != NULL) {
+        if (strcmp(current->fileName, fileName) == 0) {
+            printf("File '%s' already exists.\n", fileName);
+            return;
+        }
+        current = current->next;
+    }
+    
     FileNode* newFile = createFileNode(fileName);
     newFile->next = currentDir->files;
     currentDir->files = newFile;
@@ -165,6 +175,16 @@ void paste() {
 
     FileNode* fileToPaste = clipboardDir->files;
 
+    // 같은 이름의 파일이 이미 존재하는지 확인합니다.
+    FileNode* current = currentDir->files;
+    while (current != NULL) {
+        if (strcmp(current->fileName, fileToPaste->fileName) == 0) {
+            printf("File '%s' already exists.\n", fileToPaste->fileName);
+            return;
+        }
+        current = current->next;
+    }
+    
     // 파일을 현재 디렉토리로 이동합니다.
     FileNode* pastedFile = createFileNode(fileToPaste->fileName);
     pastedFile->next = currentDir->files;
