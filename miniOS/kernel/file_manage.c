@@ -386,3 +386,10 @@ void file_system() {
     }
 }
 
+<<<<<<< Updated upstream
+=======
+int main() {
+    file_system();
+    return 0;
+}
+>>>>>>> Stashed changes
