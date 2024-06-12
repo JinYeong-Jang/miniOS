@@ -8,11 +8,9 @@
 void file_system();
 
 int main() {
-    print_minios("\n[MiniOS SSU] Hello, World!\n");
+    printf("\n[MiniOS SSU] Hello, World!\n");
     file_system();
-    // 메모리 해제
-    free(input);
-    print_minios("[MiniOS SSU] MiniOS Shutdown........");
+    printf("[MiniOS SSU] MiniOS Shutdown........");
 
     return 0;
 }
