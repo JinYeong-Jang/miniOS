@@ -1,5 +1,5 @@
 // 사용자 입력에 따라 동작을 수행합니다.
-void handleUserInput() {
+void file_system() {
     char command[256];
     char fileName[256];
     char dirName[256];
