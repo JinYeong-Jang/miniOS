@@ -22,8 +22,6 @@ Directory* rootDir = NULL;
 Directory* currentDir = NULL;
 Directory* clipboardDir = NULL;
 
-#include <ssu_header.h>
-
 // 파일 노드를 생성합니다.
 FileNode* createFileNode(const char* fileName) {
     FileNode* newNode = (FileNode*)malloc(sizeof(FileNode));
