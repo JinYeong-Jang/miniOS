@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 // 파일 노드를 정의합니다.
 typedef struct FileNode {
@@ -91,6 +92,7 @@ void newfile(const char* fileName) {
     while (current != NULL) {
         if (strcmp(current->fileName, fileName) == 0) {
             printf("File '%s' already exists.\n", fileName);
+            sleep(3);
             return;
         }
         current = current->next;
@@ -180,6 +182,7 @@ void paste() {
     while (current != NULL) {
         if (strcmp(current->fileName, fileToPaste->fileName) == 0) {
             printf("File '%s' already exists.\n", fileToPaste->fileName);
+            sleep(3);
             return;
         }
         current = current->next;
