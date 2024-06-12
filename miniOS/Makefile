@@ -8,7 +8,7 @@ LDFLAGS=-lreadline
 TARGET=minios
 FORK = kernel/20201589/mosfork
 # Source, Object files
-SRCS=kernel/kernel.c kernel/system.c kernel/file_manage.c kernel/kernel.c kernel/ssu_function.c kernel/ssu_function.h
+SRCS=kernel/kernel.c kernel/file_manage.c kernel/kernel.c kernel/ssu_function.c kernel/ssu_function.h
 
 OBJS=$(SRCS:.c=.o) 
 
