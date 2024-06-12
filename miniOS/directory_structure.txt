@@ -1,0 +1,4 @@
+DIR root
+FILE miniOS
+DIR miniOS
+DIR clipboard

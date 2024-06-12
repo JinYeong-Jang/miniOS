@@ -11,39 +11,19 @@
 void print_minios(char* str);
 
 int main() {
-    print_minios("\n[MiniOS SSU] Hello, World!\n");
-
-    char *input;
-
-    while(1) {
-        printf("현재 사용가능한 커맨드는 다음과 같습니다.\n\tminisystem | mynum | fork | IPC | Pi | RR\n");
-        // readline을 사용하여 입력 받기
-        input = readline("커맨드를 입력하세요(종료:exit) : ");
-        printf("\n");
-        if (strcmp(input,"exit") == 0) {
-            break;
-        }
-        else if (strcmp(input,"minisystem") == 0){
-            minisystem();
-        }
-		else if (strcmp(input, "mynum") == 0){
-			mynum();
-		}
-        else if(strcmp(input, "fork") == 0){
-            mosfork();
-        }else if(strcmp(input, "IPC") == 0){
-            IPC();
-        }else if(strcmp(input, "Pi") == 0){
-            Monte_Carlo();
-        }else if(strcmp(input, "RR") == 0){
-            Round_Robin();
-        }
-        else system(input);
+    // 디렉토리 구조를 텍스트 파일에서 읽어와 복원
+    FILE* file = fopen("directory_structure.txt", "r");
+    if (file != NULL) {
+        rootDir = loadDirectoryStructure(file, NULL);
+        fclose(file);
+    } else {
+        rootDir = createDirectory("root", NULL);
+        clipboardDir = createDirectory("clipboard", rootDir);
+        rootDir->subDirs = clipboardDir;  // 루트 디렉토리의 서브 디렉토리로 추가
     }
+    currentDir = rootDir;
 
-    // 메모리 해제
-    free(input);
-    print_minios("[MiniOS SSU] MiniOS Shutdown........");
+    handleUserInput();
 
     return 0;
 }
