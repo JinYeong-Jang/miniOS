@@ -285,6 +285,7 @@ Directory* loadDirectoryStructure(FILE* file, Directory* parent) {
 }
 
 // 사용자 입력에 따라 동작을 수행합니다.
+// 사용자 입력에 따라 동작을 수행합니다.
 void file_system() {
     char command[256];
     char fileName[256];
@@ -294,28 +295,41 @@ void file_system() {
     if (file != NULL) {
         rootDir = loadDirectoryStructure(file, NULL);
         fclose(file);
-
-        // 클립보드 디렉토리를 로드된 구조에서 찾아 설정
-        Directory* temp = rootDir;
-        while (temp != NULL) {
-            if (strcmp(temp->dirName, "clipboard") == 0) {
-                clipboardDir = temp;
-                break;
-            }
-            temp = temp->subDirs;
-        }
-        if (clipboardDir == NULL) {
-            clipboardDir = createDirectory("clipboard", rootDir);
-            clipboardDir->next = rootDir->subDirs;
-            rootDir->subDirs = clipboardDir;
-        }
     }
     else {
         rootDir = createDirectory("root", NULL);
+    }
+
+    // 클립보드 디렉토리를 찾거나 새로 만듭니다.
+    Directory* temp = rootDir;
+    Directory* prev = NULL;
+    while (temp != NULL) {
+        if (strcmp(temp->dirName, "clipboard") == 0) {
+            clipboardDir = temp;
+            // 찾은 클립보드 디렉토리를 rootDir로 이동합니다.
+            if (prev == NULL) {
+                rootDir->subDirs = clipboardDir->next;
+                clipboardDir->next = rootDir;
+                rootDir = clipboardDir;
+            }
+            else {
+                prev->next = clipboardDir->next;
+                clipboardDir->next = rootDir->subDirs;
+                rootDir->subDirs = clipboardDir;
+            }
+            break;
+        }
+        prev = temp;
+        temp = temp->subDirs;
+    }
+
+    // 클립보드 디렉토리가 없으면 새로 만듭니다.
+    if (clipboardDir == NULL) {
         clipboardDir = createDirectory("clipboard", rootDir);
         clipboardDir->next = rootDir->subDirs;
         rootDir->subDirs = clipboardDir;
     }
+
     currentDir = rootDir;
 
     while (1) {
