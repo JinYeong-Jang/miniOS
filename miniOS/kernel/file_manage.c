@@ -300,10 +300,20 @@ void file_system() {
         while (temp != NULL) {
             if (strcmp(temp->dirName, "clipboard") == 0) {
                 clipboardDir = temp;
+                // 클립보드 디렉토리가 루트 아래 있는지 확인
+                if (temp->parent != rootDir) {
+                    // 클립보드 디렉토리를 루트 아래로 이동
+                    if (prev != NULL) {
+                        prev->next = temp->next;
+                    }
+                    temp->next = rootDir->subDirs;
+                    rootDir->subDirs = temp;
+                    temp->parent = rootDir;
+                }
                 break;
             }
+            prev = temp;
             temp = temp->subDirs;
-        }
         if (clipboardDir == NULL) {
             clipboardDir = createDirectory("clipboard", rootDir);
             clipboardDir->next = rootDir->subDirs;
