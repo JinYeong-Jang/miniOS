@@ -6,9 +6,8 @@ LDFLAGS=-lreadline
 
 # The build target executable:
 TARGET=minios
-FORK = kernel/20201589/mosfork
 # Source, Object files
-SRCS=kernel/kernel.c kernel/file_manage.c kernel/kernel.c
+SRCS=kernel/kernel.c kernel/file_manage.c
 
 OBJS=$(SRCS:.c=.o) 
 
