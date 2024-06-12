@@ -8,7 +8,7 @@
 
 
 
-void print_minios(char* str);
+void file_system();
 
 int main() {
     print_minios("\n[MiniOS SSU] Hello, World!\n");
