@@ -1,4 +1,0 @@
-DIR root
-FILE os
-FILE Hi
-DIR clipboard
