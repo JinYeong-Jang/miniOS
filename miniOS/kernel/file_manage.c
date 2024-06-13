@@ -218,19 +218,24 @@ void printDirectoryStructure(Directory* dir) {
 // 디렉토리 구조를 텍스트 파일에 저장합니다.
 void saveDirectoryStructure(Directory* dir, FILE* file) {
     if (dir == NULL) return;
+
     fprintf(file, "DIR %s\n", dir->dirName);
 
+    // Save files in the current directory
     FileNode* currentFile = dir->files;
     while (currentFile != NULL) {
         fprintf(file, "FILE %s\n", currentFile->fileName);
         currentFile = currentFile->next;
     }
 
+    // Save subdirectories recursively
     Directory* currentSubDir = dir->subDirs;
     while (currentSubDir != NULL) {
         saveDirectoryStructure(currentSubDir, file);
         currentSubDir = currentSubDir->next;
     }
+
+    fprintf(file, "ENDDIR\n");
 }
 
 // 텍스트 파일로부터 디렉토리 구조를 읽어옵니다.
@@ -241,39 +246,60 @@ Directory* loadDirectoryStructure(FILE* file, Directory* parent) {
     FileNode* lastFile = NULL;
 
     while (fgets(line, sizeof(line), file) != NULL) {
+        line[strcspn(line, "\r\n")] = 0; // 줄 끝의 개행문자 제거
+
         char* token = strtok(line, " ");
         if (strcmp(token, "DIR") == 0) {
             char* dirName = strtok(NULL, "\n");
             Directory* newDir = createDirectory(dirName, parent);
-            if (dir == NULL) {
-                dir = newDir;
-            } else if (lastSubDir != NULL) {
-                lastSubDir->next = newDir;
-            }
-            lastSubDir = newDir;
 
             if (parent != NULL) {
-                newDir->next = parent->subDirs;
-                parent->subDirs = newDir;
+                if (parent->subDirs == NULL) {
+                    parent->subDirs = newDir;
+                } else {
+                    Directory* subDir = parent->subDirs;
+                    while (subDir->next != NULL) {
+                        subDir = subDir->next;
+                    }
+                    subDir->next = newDir;
+                }
             }
 
+            if (lastSubDir == NULL) {
+                lastSubDir = newDir;
+            } else {
+                lastSubDir->next = newDir;
+                lastSubDir = newDir;
+            }
+
+            if (dir == NULL) {
+                dir = newDir; // 첫 번째 디렉토리 설정
+            }
+
+            // 재귀적으로 하위 디렉토리들을 추가합니다.
             loadDirectoryStructure(file, newDir);
+
         } else if (strcmp(token, "FILE") == 0) {
             char* fileName = strtok(NULL, "\n");
             FileNode* newFile = createFileNode(fileName);
+
             if (parent != NULL) {
-                if (lastFile == NULL) {
+                if (parent->files == NULL) {
                     parent->files = newFile;
                 } else {
-                    lastFile->next = newFile;
+                    FileNode* fileNode = parent->files;
+                    while (fileNode->next != NULL) {
+                        fileNode = fileNode->next;
+                    }
+                    fileNode->next = newFile;
                 }
-                lastFile = newFile;
             }
         } else if (strcmp(token, "ENDDIR") == 0) {
-            break;
+            return dir; // 디렉토리의 끝을 만나면 반환
         }
     }
-    return dir;
+
+    return dir; // 루트 디렉토리 반환
 }
 
 // 사용자 입력에 따라 동작을 수행합니다.
@@ -287,18 +313,18 @@ void file_system() {
         rootDir = loadDirectoryStructure(file, NULL);
         fclose(file);
     } else {
-        rootDir = createDirectory("root", NULL);
-        clipboardDir = createDirectory("clipboard", rootDir);
+        rootDir = createDirectory("root", NULL);  // 기본적으로 루트 디렉토리 생성
+        clipboardDir = createDirectory("clipboard", rootDir);  // 클립보드 디렉토리 생성
         rootDir->subDirs = clipboardDir;  // 루트 디렉토리의 서브 디렉토리로 추가
     }
-    currentDir = rootDir;
+    currentDir = rootDir;  // 현재 디렉토리 초기화
     
     while (1) {
-        system("clear");
-        printDirectoryStructure(currentDir);
+        system("clear");  // 화면 지우기
+        printDirectoryStructure(currentDir);  // 디렉토리 구조 출력
         printf("\nEnter command (newfile, copy, paste, remove, mkdir, cd, exit): ");
         scanf("%s", command);
-
+        
         if (strcmp(command, "newfile") == 0) {
             printf("Enter file name to create: ");
             scanf("%s", fileName);
