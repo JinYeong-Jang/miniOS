@@ -256,18 +256,17 @@ Directory* loadDirectoryStructure(FILE* file, Directory* parent) {
             if (parent != NULL) {
                 if (parent->subDirs == NULL) {
                     parent->subDirs = newDir;
-                } else {
-                    Directory* subDir = parent->subDirs;
-                    while (subDir->next != NULL) {
-                        subDir = subDir->next;
-                    }
-                    subDir->next = newDir;
+                }
+                else {
+                    lastSubDir->next = newDir;
                 }
             }
+            
 
             if (lastSubDir == NULL) {
                 lastSubDir = newDir;
-            } else {
+            }
+            else {
                 lastSubDir->next = newDir;
                 lastSubDir = newDir;
             }
@@ -279,14 +278,16 @@ Directory* loadDirectoryStructure(FILE* file, Directory* parent) {
             // 재귀적으로 하위 디렉토리들을 추가합니다.
             loadDirectoryStructure(file, newDir);
 
-        } else if (strcmp(token, "FILE") == 0) {
+        }
+        else if (strcmp(token, "FILE") == 0) {
             char* fileName = strtok(NULL, "\n");
             FileNode* newFile = createFileNode(fileName);
 
             if (parent != NULL) {
                 if (parent->files == NULL) {
                     parent->files = newFile;
-                } else {
+                }
+                else {
                     FileNode* fileNode = parent->files;
                     while (fileNode->next != NULL) {
                         fileNode = fileNode->next;
@@ -294,7 +295,8 @@ Directory* loadDirectoryStructure(FILE* file, Directory* parent) {
                     fileNode->next = newFile;
                 }
             }
-        } else if (strcmp(token, "ENDDIR") == 0) {
+        }
+        else if (strcmp(token, "ENDDIR") == 0) {
             return dir; // 디렉토리의 끝을 만나면 반환
         }
     }
@@ -312,6 +314,7 @@ void file_system() {
     if (file != NULL) {
         rootDir = loadDirectoryStructure(file, NULL);
         fclose(file);
+        
         clipboardDir = rootDir->subDirs;
         while (clipboardDir != NULL && strcmp(clipboardDir->dirName, "clipboard") != 0) {
             while (clipboardDir != NULL && strcmp(clipboardDir->dirName, "clipboard") != 0) {
@@ -320,7 +323,20 @@ void file_system() {
             if (clipboardDir != NULL) break;
             clipboardDir = clipboardDir->subDirs;
         }
+        if (clipboardDir == NULL) {
+            clipboardDir = createDirectory("clipboard", rootDir);
+            if (rootDir->subDirs == NULL) {
+                rootDir->subDirs = clipboardDir;
+            }
+            else {
+                Directory* lastSubDir = rootDir->subDirs;
+                while (lastSubDir->next != NULL)
+                    lastSubDir = lastSubDir->next;
+                lastSubDir->next = clipboardDir;
+            }
+        }
     }
+    
     else {
         rootDir = createDirectory("root", NULL);  // 기본적으로 루트 디렉토리 생성
         clipboardDir = createDirectory("clipboard", rootDir);  // 클립보드 디렉토리 생성
