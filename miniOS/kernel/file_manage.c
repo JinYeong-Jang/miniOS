@@ -123,7 +123,7 @@ void copy(const char* fileName) {
     }
 
     FileNode* current = currentDir->files;
-
+    printf("%s\n", current->fileName);
     while (current != NULL && strcmp(current->fileName, fileName) != 0) {
         current = current->next;
     }
@@ -307,51 +307,67 @@ void file_system() {
     char command[256];
     char fileName[256];
     char dirName[256];
-    
+
     FILE* file = fopen("directory_structure.txt", "r");
     if (file != NULL) {
         rootDir = loadDirectoryStructure(file, NULL);
         fclose(file);
-    } else {
+        clipboardDir = rootDir->subDirs;
+        while (clipboardDir != NULL && strcmp(clipboardDir->dirName, "clipboard") != 0) {
+            while (clipboardDir != NULL && strcmp(clipboardDir->dirName, "clipboard") != 0) {
+                clipboardDir = clipboardDir->next;
+            }
+            if (clipboardDir != NULL) break;
+            clipboardDir = clipboardDir->subDirs;
+        }
+    }
+    else {
         rootDir = createDirectory("root", NULL);  // 기본적으로 루트 디렉토리 생성
         clipboardDir = createDirectory("clipboard", rootDir);  // 클립보드 디렉토리 생성
         rootDir->subDirs = clipboardDir;  // 루트 디렉토리의 서브 디렉토리로 추가
     }
     currentDir = rootDir;  // 현재 디렉토리 초기화
-    
+
     while (1) {
         system("clear");  // 화면 지우기
         printDirectoryStructure(currentDir);  // 디렉토리 구조 출력
         printf("\nEnter command (newfile, copy, paste, remove, mkdir, cd, exit): ");
         scanf("%s", command);
-        
+
         if (strcmp(command, "newfile") == 0) {
             printf("Enter file name to create: ");
             scanf("%s", fileName);
             newfile(fileName);
-        } else if (strcmp(command, "copy") == 0) {
+        }
+        else if (strcmp(command, "copy") == 0) {
             printf("Enter file name to copy: ");
             scanf("%s", fileName);
             copy(fileName);
-        } else if (strcmp(command, "paste") == 0) {
+        }
+        else if (strcmp(command, "paste") == 0) {
             paste();
-        } else if (strcmp(command, "remove") == 0) {
+        }
+        else if (strcmp(command, "remove") == 0) {
             printf("Enter file name to remove: ");
             scanf("%s", fileName);
             removeFile(fileName);
-        } else if (strcmp(command, "mkdir") == 0) {
+        }
+        else if (strcmp(command, "mkdir") == 0) {
             printf("Enter directory name to create: ");
             scanf("%s", dirName);
             addSubDirectory(dirName);
-        } else if (strcmp(command, "cd") == 0) {
+        }
+        else if (strcmp(command, "cd") == 0) {
             printf("Enter directory name to move into: ");
             scanf("%s", dirName);
             if (strcmp(dirName, "..") == 0) {
                 moveToParentDirectory();
-            } else {
+            }
+            else {
                 moveToDirectory(dirName);
             }
-        } else if (strcmp(command, "exit") == 0) {
+        }
+        else if (strcmp(command, "exit") == 0) {
             // 프로그램 종료 시 디렉토리 구조 저장
             FILE* file = fopen("directory_structure.txt", "w");
             if (file == NULL) {
@@ -361,7 +377,8 @@ void file_system() {
             saveDirectoryStructure(rootDir, file);
             fclose(file);
             break;
-        } else {
+        }
+        else {
             printf("Invalid command.\n");
         }
     }
